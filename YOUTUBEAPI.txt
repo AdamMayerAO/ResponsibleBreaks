@@ -1,0 +1,23 @@
+string
+The videoDuration parameter filters video search results based on their duration. If you specify a value for this parameter, you must also set the type parameter's value to video.
+
+Acceptable values are:
+any – Do not filter video search results based on their duration. This is the default value.
+long – Only include videos longer than 20 minutes.
+medium – Only include videos that are between four and 20 minutes long (inclusive).
+short – Only include videos that are less than four minutes long.
+
+GET https://www.googleapis.com/youtube/v3/search
+
+Required parameters
+part	string
+The part parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet.
+
+maxResults	unsigned integer
+The maxResults parameter specifies the maximum number of items that should be returned in the result set. Acceptable values are 0 to 50, inclusive. The default value is 5.
+
+q	string
+The q parameter specifies the query term to search for.
+
+Your request can also use the Boolean NOT (-) and OR (|) operators to exclude videos or to find videos that are associated with one of several search terms. For example, to search for videos matching either "boating" or "sailing", set the q parameter value to boating|sailing. Similarly, to search for videos matching either "boating" or "sailing" but not "fishing", set the q parameter value to boating|sailing -fishing. Note that the pipe character must be URL-escaped when it is sent in your API request. The URL-escaped value for the pipe character is %7C.
+
