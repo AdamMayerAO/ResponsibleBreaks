@@ -2,7 +2,10 @@
 
 const apiKey = 
 "AIzaSyAxmelNASa0uSVaqf38SNk8UkJ-XP3b5q4"
-const searchURL = 'https://www.googleapis.com/youtube/v3/search';
+const youTubeURL = 'https://www.googleapis.com/youtube/v3/search';
+
+const tedApiKey = "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd"
+const tedUrl = 'https://bestapi-ted-v1.p.rapidapi.com/talksByDescription'
 
 
 function formatQueryParams(params) {
@@ -11,23 +14,58 @@ function formatQueryParams(params) {
   return queryItems.join('&');
 }
 
-function displayResults(responseJson) {
+function displayTEDResults(responseJson){
+
+  console.log(responseJson)
+  for (let i = 0; i < responseJson.items.length; i++){
+
+
+  $('#results-list').append(
+        `<li>
+        
+        </li>`
+  )}
+  }
+
+function displayYouTubeResults(responseJson) {
   // if there are previous results, remove them
-  console.log(responseJson);
-  $('#results-list').empty();
+  
   
   for (let i = 0; i < responseJson.items.length; i++){
     
     $('#results-list').append(
-      `<li><h3><a href="${responseJson.items[i].snippet.thumbnails.default.url}" target="_blank">${responseJson.items[i].snippet.title}</a></h3>
+      `<li><h3><a href="${'https://www.youtube.com/watch?v='+responseJson.items[0].id.videoId}" target="_blank">${responseJson.items[i].snippet.title}</a></h3>
       
-      <h3><a href="${responseJson.items[i].snippet.thumbnails.default.url}" target="_blank"><img src='${responseJson.items[i].snippet.thumbnails.default.url}'></a></h3>
+      <a href="${'https://www.youtube.com/watch?v='+responseJson.items[0].id.videoId}" target="_blank"><img src='${responseJson.items[i].snippet.thumbnails.default.url}'></a>
+      
       </li>`
     )};
   $('#results').removeClass('hidden');
 };
 
-function getVideos(query, maxResults=3, minutes) {
+function getTEDTalks(query){
+  console.log('here')
+  const params = {
+    key: tedApiKey,
+    q: query,
+  };
+  const queryString = formatQueryParams(params)
+  const url = tedUrl + '?' + queryString;
+fetch(url)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    })
+    .then(responseJson => displayTEDResults(responseJson))
+    .catch(err => {
+      $('#js-error-message').text(`Something went wrong: ${err.message}`);
+    });
+
+}
+
+function getYouTubeVideos(query, minutes) {
   let time = ""
   if (minutes<4){
     time = "short";
@@ -45,9 +83,8 @@ function getVideos(query, maxResults=3, minutes) {
     videoDuration: time,
   };
   const queryString = formatQueryParams(params)
-  const url = searchURL + '?' + queryString;
+  const url = youTubeURL + '?' + queryString;
 
-  console.log(url);
 
   fetch(url)
     .then(response => {
@@ -56,7 +93,7 @@ function getVideos(query, maxResults=3, minutes) {
       }
       throw new Error(response.statusText);
     })
-    .then(responseJson => displayResults(responseJson))
+    .then(responseJson => displayYouTubeResults(responseJson))
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
@@ -65,9 +102,12 @@ function getVideos(query, maxResults=3, minutes) {
 function watchForm() {
   $('form').submit(event => {
     event.preventDefault();
+    $('#results-list').empty();
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
-    getVideos(searchTerm, minutes);
+    getYouTubeVideos(searchTerm, minutes);
+    getTEDTalks(searchTerm);
+
   });
 }
 
