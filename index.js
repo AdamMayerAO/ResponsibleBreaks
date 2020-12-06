@@ -4,8 +4,6 @@ const apiKey =
 "AIzaSyAxmelNASa0uSVaqf38SNk8UkJ-XP3b5q4"
 const youTubeURL = 'https://www.googleapis.com/youtube/v3/search';
 
-const tedApiKey = "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd"
-const tedUrl = 'https://bestapi-ted-v1.p.rapidapi.com/talksByDescription'
 
 
 function formatQueryParams(params) {
@@ -14,65 +12,69 @@ function formatQueryParams(params) {
   return queryItems.join('&');
 }
 
-function displayTEDResults(responseJson){
 
-  console.log(responseJson)
-  for (let i = 0; i < responseJson.items.length; i++){
+function displayTEDResults(response){
+  //console.log(response[0].name)
+  //console.log(response[0].embeddedLink)
+  //console.log(response[0].talkDesc)
+  //const imbed = response[0].embeddedLink.replace("\\\\\\",`\"`);
+  
+  for (let i = 0; i < response.length; i++){
+  const embed = response[i].talk_url.slice(11);
+    $('#results-list').append(
+      `<li><h3><a href="${response[i].talk_url}" target="_blank">${response[i].name}</a></h3>
+      <p><iframe src="https://embed-ssl.${embed}.html" width="560" height="315" frameborder=0" scrolling="no" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></p>
+      <p>${response[i].talkDesc}</p>
+      </li>`
+    )
+  };
+  $('#results').removeClass('hidden');     
+}
 
-
-  $('#results-list').append(
-        `<li>
-        
-        </li>`
-  )}
-  }
+function getTEDTalks(searchTerm){
+      fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=3`, {
+      "method": "GET",
+      "headers": {
+        "x-rapidapi-key": "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd",
+        "x-rapidapi-host": "bestapi-ted-v1.p.rapidapi.com"
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+        })
+      .then(response => displayTEDResults(response))
+      .catch(err => {
+        console.error(err);
+        });
+} 
 
 function displayYouTubeResults(responseJson) {
-  // if there are previous results, remove them
-  
-  
   for (let i = 0; i < responseJson.items.length; i++){
     
     $('#results-list').append(
-      `<li><h3><a href="${'https://www.youtube.com/watch?v='+responseJson.items[0].id.videoId}" target="_blank">${responseJson.items[i].snippet.title}</a></h3>
+      `<li><h3><a href="${'https://www.youtube.com/watch?v='+responseJson.items[i].id.videoId}" target="_blank">${responseJson.items[i].snippet.title}</a></h3>
       
-      <a href="${'https://www.youtube.com/watch?v='+responseJson.items[0].id.videoId}" target="_blank"><img src='${responseJson.items[i].snippet.thumbnails.default.url}'></a>
+      <div class = iframe-container>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/${responseJson.items[i].id.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
       
       </li>`
     )};
   $('#results').removeClass('hidden');
 };
 
-function getTEDTalks(query){
-  console.log('here')
-  const params = {
-    key: tedApiKey,
-    q: query,
-  };
-  const queryString = formatQueryParams(params)
-  const url = tedUrl + '?' + queryString;
-fetch(url)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => displayTEDResults(responseJson))
-    .catch(err => {
-      $('#js-error-message').text(`Something went wrong: ${err.message}`);
-    });
-
-}
 
 function getYouTubeVideos(query, minutes) {
   let time = ""
   if (minutes<4){
-    time = "short";
-  } else if (minutes>4 && minutes<20){
-    time = "medium";
-  } else{
-    time = "long";
+      time = "short";
+    } else if (minutes>4 && minutes<20){
+      time = "medium";
+    } else{
+      time = "long";
   }
   const params = {
     key: apiKey,
@@ -98,6 +100,11 @@ function getYouTubeVideos(query, minutes) {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
+function displayresults(searchTerm){
+  const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
+  $('#title').replaceWith(`<h1 id ='title'>"${results}" Results</h1>`);
+  $('#js-form').addClass('hidden');
+}
 
 function watchForm() {
   $('form').submit(event => {
@@ -107,7 +114,7 @@ function watchForm() {
     const minutes = $('#minutes').val();
     getYouTubeVideos(searchTerm, minutes);
     getTEDTalks(searchTerm);
-
+    displayresults(searchTerm)
   });
 }
 
