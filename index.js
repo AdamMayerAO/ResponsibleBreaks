@@ -11,13 +11,52 @@ function formatQueryParams(params) {
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
   return queryItems.join('&');
 }
+function getVideoLength(ids, minutes){
+    const url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids}&key=${apiKey}`
+    fetch(url)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    })
+    .then(responseJson => filterByLength(responseJson, minutes))
+    .catch(err => {
+        console.error(err)
+        });
+}
+function filterByLength(responseJson, minutes){
+  minutes=parseInt(minutes);
+
+  let desiredResults = []
+  let time = ""
+  for (let i = 0; i<responseJson.items.length; i++){
+     //console.log(responseJson.items[i]);
+     
+     let duration =  responseJson.items[i].contentDetails.duration
+     if(duration.includes("H")) continue;
+     if(duration.includes("P0D")) continue;
+
+     const m = duration.search("M")
+     time = duration.slice(2,m)
+    time = parseInt(time);
+    if (time <= minutes){
+     console.log(time, "time")
+      desiredResults.push(responseJson.items[i]);
+    }
+  }
+  displayYouTubeResults(desiredResults); 
+}
+//FILTER function desiredResults(time, minutes){return time <= minutes;}
 
 
+/*
 function displayTEDResults(response){
   //console.log(response[0].name)
   //console.log(response[0].embeddedLink)
   //console.log(response[0].talkDesc)
-  //const imbed = response[0].embeddedLink.replace("\\\\\\",`\"`);
+  //const imbed = response[0].embeddedLink.replace
+  ("\\\\\\",`\"`);
   
   for (let i = 0; i < response.length; i++){
   const embed = response[i].talk_url.slice(11);
@@ -30,7 +69,8 @@ function displayTEDResults(response){
   };
   $('#results').removeClass('hidden');     
 }
-
+*/
+/*
 function getTEDTalks(searchTerm){
       fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=3`, {
       "method": "GET",
@@ -50,26 +90,28 @@ function getTEDTalks(searchTerm){
         console.error(err);
         });
 } 
-
-function displayYouTubeResults(responseJson) {
-  for (let i = 0; i < responseJson.items.length; i++){
-    
+*/
+function displayYouTubeResults(desiredResults) {
+  //console.log(desiredResults)
+  for (let i = 0; i < desiredResults.length; i++){
     $('#results-list').append(
-      `<li><h3><a href="${'https://www.youtube.com/watch?v='+responseJson.items[i].id.videoId}" target="_blank">${responseJson.items[i].snippet.title}</a></h3>
+      `<li>
+        <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}</a></h3>
       
-      <div class = iframe-container>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/${responseJson.items[i].id.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
+        <div class = iframe-container>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
       
       </li>`
-    )};
+    );
+  }
   $('#results').removeClass('hidden');
 };
 
 
 function getYouTubeVideos(query, minutes) {
   let time = ""
-  if (minutes<4){
+  if (minutes<=4){
       time = "short";
     } else if (minutes>4 && minutes<20){
       time = "medium";
@@ -80,14 +122,14 @@ function getYouTubeVideos(query, minutes) {
     key: apiKey,
     q: query,
     part: 'snippet',
-    maxResults: 3,
+    maxResults: 50,
     type: 'video',
     videoDuration: time,
   };
   const queryString = formatQueryParams(params)
   const url = youTubeURL + '?' + queryString;
 
-
+//when i map the video id, i lost the name snippet.title
   fetch(url)
     .then(response => {
       if (response.ok) {
@@ -95,7 +137,8 @@ function getYouTubeVideos(query, minutes) {
       }
       throw new Error(response.statusText);
     })
-    .then(responseJson => displayYouTubeResults(responseJson))
+    //what if I passed just responseJson.items and then map it in the next function ?
+    .then(responseJson => getVideoLength(responseJson.items.map(item=>item.id.videoId), minutes))
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
@@ -113,7 +156,7 @@ function watchForm() {
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
     getYouTubeVideos(searchTerm, minutes);
-    getTEDTalks(searchTerm);
+    //getTEDTalks(searchTerm);
     displayresults(searchTerm)
   });
 }
