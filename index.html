@@ -13,15 +13,6 @@
         <h1 id ='title'>Welcome!</h1>
         <h4 id = 'subtitle'></h4>
         <form id="js-form">
-          
-            <label>How much time do you have to waste?</label><br>
-            <input type="radio" id="short" name="time" value="short">
-            <label for="short">A bit: Less than 4 minutes</label><br>
-            <input type="radio" id="medium" name="time" value="medium">
-            <label for="medium">A healthy break: 4-20 minutes</label><br>
-            <input type="radio" id="long" name="time" value="long">
-            <label for="long">A while: More than 20 minutes</label><br>
-            
             <label for="time"> I have </label>
             <input type='number' id="minutes" name="time" value="10"> minutes<br>
             
@@ -31,8 +22,12 @@
         </form>
 
         <p id="js-error-message" class="error-message"></p>
-        <section id="results" class="hidden">
-          <h2></h2>
+        <section id="results" class="hidden group">
+          <h2 id ="restart">
+            <div class='reset hidden'> 
+              <button type="submit">Search Again</button>
+            </div>
+          </h2>
           <ul id="results-list">
           </ul>
         </section>

@@ -44,27 +44,6 @@ function filterByLength(responseJson, minutes){
   displayResults(desiredResults); 
 }
 
-/*
-function displayTEDResults(response){
-  //console.log(response[0].name)
-  //console.log(response[0].embeddedLink)
-  //console.log(response[0].talkDesc)
-  //const imbed = response[0].embeddedLink.replace
-  
-  for (let i = 0; i < response.length; i++){
-  const embed = response[i].talk_url.slice(11);
-    $('#results-list').append(
-      `<li><h3><a href="${response[i].talk_url}" target="_blank">${response[i].name}</a></h3>
-      <p><iframe src="https://embed-ssl.${embed}.html" width="560" height="315" frameborder=0" scrolling="no" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></p>
-      <p>${response[i].talkDesc}</p>
-      </li>`
-    )
-  };
-  $('#results').removeClass('hidden');     
-}
-*/
-
-
 function getTEDTalks(searchTerm, minutes){
       fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=50`, {
       "method": "GET",
@@ -142,6 +121,13 @@ function displayResultsTitle(searchTerm){
   const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
   $('#title').replaceWith(`<h1 id ='title'>"${results}:" Results</h1>`);
   $('#js-form').addClass('hidden');
+  $('.reset').toggleClass('hidden');
+  $('.reset').click(function(event){
+    $('#js-form').toggleClass('hidden');
+    $('.reset').toggleClass('hidden');
+    $('#results-list').empty();
+    $('#title').replaceWith(`<h1 id ='title'>Try Something Else:</h1>`);
+  });
 }
 
 function watchForm() {
@@ -150,7 +136,6 @@ function watchForm() {
     $('#results-list').empty();
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
-    console.log('watchForm', minutes)
     getYouTubeVideos(searchTerm, minutes);
     getTEDTalks(searchTerm, minutes);
     displayResultsTitle(searchTerm);
