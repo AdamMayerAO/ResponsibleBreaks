@@ -26,29 +26,23 @@ function getVideoLength(ids, minutes){
         });
 }
 function filterByLength(responseJson, minutes){
-  minutes=parseInt(minutes);
 
+  minutes=parseInt(minutes);
   let desiredResults = []
   let time = ""
-  for (let i = 0; i<responseJson.items.length; i++){
-     //console.log(responseJson.items[i]);
-     
+  for (let i = 0; i<responseJson.items.length; i++){     
      let duration =  responseJson.items[i].contentDetails.duration
-     if(duration.includes("H")) continue;
-     if(duration.includes("P0D")) continue;
-
+     if(duration.includes("H")) continue; //don't add videos over 1 hour
+     if(duration.includes("P0D")) continue; //don't add live streams
      const m = duration.search("M")
      time = duration.slice(2,m)
-    time = parseInt(time);
-    if (time <= minutes){
-     console.log(time, "time")
-      desiredResults.push(responseJson.items[i]);
+     time = parseInt(time);
+     if (time <= minutes){
+     desiredResults.push(responseJson.items[i]);
     }
   }
-  displayYouTubeResults(desiredResults); 
+  displayResults(desiredResults); 
 }
-//FILTER function desiredResults(time, minutes){return time <= minutes;}
-
 
 /*
 function displayTEDResults(response){
@@ -56,7 +50,6 @@ function displayTEDResults(response){
   //console.log(response[0].embeddedLink)
   //console.log(response[0].talkDesc)
   //const imbed = response[0].embeddedLink.replace
-  ("\\\\\\",`\"`);
   
   for (let i = 0; i < response.length; i++){
   const embed = response[i].talk_url.slice(11);
@@ -70,9 +63,10 @@ function displayTEDResults(response){
   $('#results').removeClass('hidden');     
 }
 */
-/*
-function getTEDTalks(searchTerm){
-      fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=3`, {
+
+
+function getTEDTalks(searchTerm, minutes){
+      fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=50`, {
       "method": "GET",
       "headers": {
         "x-rapidapi-key": "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd",
@@ -85,14 +79,17 @@ function getTEDTalks(searchTerm){
         }
         throw new Error(response.statusText);
         })
-      .then(response => displayTEDResults(response))
+      
+      .then(responseJson => getVideoLength(responseJson.map(item=>item.youTubeID), minutes))
+     
       .catch(err => {
         console.error(err);
         });
 } 
-*/
-function displayYouTubeResults(desiredResults) {
-  //console.log(desiredResults)
+
+function displayResults(desiredResults) {
+  
+  
   for (let i = 0; i < desiredResults.length; i++){
     $('#results-list').append(
       `<li>
@@ -129,7 +126,6 @@ function getYouTubeVideos(query, minutes) {
   const queryString = formatQueryParams(params)
   const url = youTubeURL + '?' + queryString;
 
-//when i map the video id, i lost the name snippet.title
   fetch(url)
     .then(response => {
       if (response.ok) {
@@ -137,15 +133,14 @@ function getYouTubeVideos(query, minutes) {
       }
       throw new Error(response.statusText);
     })
-    //what if I passed just responseJson.items and then map it in the next function ?
     .then(responseJson => getVideoLength(responseJson.items.map(item=>item.id.videoId), minutes))
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
-function displayresults(searchTerm){
+function displayResultsTitle(searchTerm){
   const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
-  $('#title').replaceWith(`<h1 id ='title'>"${results}" Results</h1>`);
+  $('#title').replaceWith(`<h1 id ='title'>"${results}:" Results</h1>`);
   $('#js-form').addClass('hidden');
 }
 
@@ -155,9 +150,10 @@ function watchForm() {
     $('#results-list').empty();
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
+    console.log('watchForm', minutes)
     getYouTubeVideos(searchTerm, minutes);
-    //getTEDTalks(searchTerm);
-    displayresults(searchTerm)
+    getTEDTalks(searchTerm, minutes);
+    displayResultsTitle(searchTerm);
   });
 }
 
