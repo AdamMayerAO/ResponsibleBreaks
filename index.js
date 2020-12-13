@@ -30,16 +30,20 @@ function filterByLength(responseJson, minutes){
   minutes=parseInt(minutes);
   let desiredResults = []
   let time = ""
-  for (let i = 0; i<responseJson.items.length; i++){     
-     let duration =  responseJson.items[i].contentDetails.duration
-     if(duration.includes("H")) continue; //don't add videos over 1 hour
-     if(duration.includes("P0D")) continue; //don't add live streams
-     const m = duration.search("M")
-     time = duration.slice(2,m)
-     time = parseInt(time);
-     if (time <= minutes){
-     desiredResults.push(responseJson.items[i]);
-    }
+  let x = 0
+  
+    for (let i = 0; i<responseJson.items.length; i++){   
+      let duration =  responseJson.items[i].contentDetails.duration
+      if(duration.includes("H")) continue; //don't add videos over 1 hour
+      if(duration.includes("P0D")) continue; //don't add live streams
+      const m = duration.search("M")
+      time = duration.slice(2,m)
+      time = parseInt(time);
+      if (time <= minutes && x<3){
+        desiredResults.push(responseJson.items[i]);
+        x++;
+        
+      }
   }
   displayResults(desiredResults); 
 }
