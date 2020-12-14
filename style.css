@@ -13,6 +13,8 @@
   text-align: center;
   background-color: lightseagreen;
   margin: 4%;
+  border-style: double inset;
+  border-color: rgb(190, 109, 228); 
 }
 .header:hover{
   background-color: rgb(61, 189, 157);
