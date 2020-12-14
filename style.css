@@ -28,19 +28,22 @@
   border-style:solid;
   border-color: rgb(190, 109, 228); 
 }
+
 .iframe-container{
   position: relative;
   width: 100%;
   padding-bottom: 56.25%; 
   height: 0;
 }
+
 .iframe-container iframe{
   position: absolute;
   top:0;
   left: 0;
-  width: 100%;
+  width: 75%;
   height: 100%;
 }
+
 
 .group {
   display: flex;
@@ -75,7 +78,7 @@
 #results-list{
   display: flex;
   flex-direction: column;
-  width: auto;
+  width: 75%;
   list-style-type: none;
   padding-top: none;
   margin-top: none;
