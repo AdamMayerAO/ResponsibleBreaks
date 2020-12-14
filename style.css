@@ -75,7 +75,7 @@
 #results-list{
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: auto;
   list-style-type: none;
   padding-top: none;
   margin-top: none;
