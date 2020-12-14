@@ -123,11 +123,11 @@ function getYouTubeVideos(query, minutes) {
 }
 function displayResultsTitle(searchTerm){
   const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
-  $('#title').replaceWith(`<h1 id ='title'>"${results}:" Results</h1>`);
+  $('#title').replaceWith(`<h1 id ='title'>"${results}" Results:</h1>`);
   $('#js-form').addClass('hidden');
-  $('.reset').toggleClass('hidden');
+  $('.reset').removeClass('hidden');
   $('.reset').click(function(event){
-    $('#js-form').toggleClass('hidden');
+    $('#js-form').removeClass('hidden');
     $('.reset').toggleClass('hidden');
     $('#results-list').empty();
     $('#title').replaceWith(`<h1 id ='title'>Try Something Else:</h1>`);
@@ -141,7 +141,7 @@ function watchForm() {
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
     getYouTubeVideos(searchTerm, minutes);
-    getTEDTalks(searchTerm, minutes);
+   // getTEDTalks(searchTerm, minutes);
     displayResultsTitle(searchTerm);
   });
 }
