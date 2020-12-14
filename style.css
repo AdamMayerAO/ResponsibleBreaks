@@ -81,7 +81,7 @@
   margin-top: none;
 }
 
-@media all and (min-width: 300px){
+@media all and (min-width: 500px){
   header section h1{
     display: flex; 
     padding: 0 10%;

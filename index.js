@@ -11,6 +11,7 @@ function formatQueryParams(params) {
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
   return queryItems.join('&');
 }
+//with the YouTube ids we can get the length of each video
 function getVideoLength(ids, minutes){
     const url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids}&key=${apiKey}`
     fetch(url)
@@ -42,7 +43,6 @@ function filterByLength(responseJson, minutes){
       if (time <= minutes && x<3){
         desiredResults.push(responseJson.items[i]);
         x++;
-        
       }
   }
   displayResults(desiredResults); 
@@ -50,10 +50,10 @@ function filterByLength(responseJson, minutes){
 
 function getTEDTalks(searchTerm, minutes){
       fetch(`https://bestapi-ted-v1.p.rapidapi.com/talksByDescription?description=${searchTerm}&size=50`, {
-      "method": "GET",
-      "headers": {
-        "x-rapidapi-key": "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd",
-        "x-rapidapi-host": "bestapi-ted-v1.p.rapidapi.com"
+        "method": "GET",
+        "headers": {
+          "x-rapidapi-key": "28b9f4532bmsh288e09dc8ff4fc5p12b50cjsnf4b7f74f47dd",
+          "x-rapidapi-host": "bestapi-ted-v1.p.rapidapi.com"
         }
       })
       .then(response => {
@@ -62,17 +62,14 @@ function getTEDTalks(searchTerm, minutes){
         }
         throw new Error(response.statusText);
         })
-      
+      //send the youTube version of the TED talk through the length functions
       .then(responseJson => getVideoLength(responseJson.map(item=>item.youTubeID), minutes))
-     
       .catch(err => {
         console.error(err);
         });
 } 
 
 function displayResults(desiredResults) {
-  
-  
   for (let i = 0; i < desiredResults.length; i++){
     $('#results-list').append(
       `<li>
@@ -81,7 +78,6 @@ function displayResults(desiredResults) {
         <div class = iframe-container>
           <iframe width="560" height="315" src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-      
       </li>`
     );
   }
@@ -121,6 +117,8 @@ function getYouTubeVideos(query, minutes) {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
+
+//Format the display results
 function displayResultsTitle(searchTerm){
   const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
   $('#title').replaceWith(`<h1 id ='title'>"${results}" Results:</h1>`);
