@@ -77,7 +77,7 @@ function displayResults(desiredResults) {
     for (let i = 0; i < desiredResults.length; i++){
       $('#results-list').append(
         `<li>
-          <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}</a></h3>
+          <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}  </a><br>Time: ${desiredResults[i].contentDetails.duration.slice(2)} </h3>
         
           <div class = iframe-container>
             <iframe src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -86,7 +86,6 @@ function displayResults(desiredResults) {
       );
     }
   } else{
-    $('#results-list').empty();
     $('#results-list').replaceWith(`<ul id='results-list'><br><li>There were no results found. Please modify your search.</li></ul>`)
   }
   $('#results').removeClass('hidden');
@@ -147,7 +146,7 @@ function watchForm() {
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
     getYouTubeVideos(searchTerm, minutes);
-    getTEDTalks(searchTerm, minutes);
+    //getTEDTalks(searchTerm, minutes);
     displayResultsTitle(searchTerm);
   });
 }
