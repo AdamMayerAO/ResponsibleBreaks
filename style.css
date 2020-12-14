@@ -50,7 +50,7 @@
 #js-form{
   margin: auto;
   width: 70%;
-
+  padding: 1%;
   border-style: outset;
   border-width: 1px;
   border-color: lightseagreen;
@@ -81,7 +81,7 @@
   margin-top: none;
 }
 
-@media all and (min-width: 700px){
+@media all and (min-width: 300px){
   header section h1{
     display: flex; 
     padding: 0 10%;
