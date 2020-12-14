@@ -139,7 +139,7 @@ function watchForm() {
     const searchTerm = $('#js-search-term').val();
     const minutes = $('#minutes').val();
     getYouTubeVideos(searchTerm, minutes);
-   // getTEDTalks(searchTerm, minutes);
+    getTEDTalks(searchTerm, minutes);
     displayResultsTitle(searchTerm);
   });
 }
