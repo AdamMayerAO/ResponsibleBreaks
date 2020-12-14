@@ -16,6 +16,9 @@
   border-style: double inset;
   border-color: rgb(190, 109, 228); 
 }
+#subtitle{
+  font-style: italic;
+}
 .header:hover{
   background-color: rgb(61, 189, 157);
 }
@@ -81,8 +84,9 @@
   flex-direction: column;
   width: 75%;
   list-style-type: none;
-  padding-top: none;
+  padding-top: 3px;
   margin-top: none;
+  margin-left: 1px;
 }
 
 @media all and (min-width: 500px){

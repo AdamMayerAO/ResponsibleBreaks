@@ -4,7 +4,7 @@ const apiKey =
 "AIzaSyAxmelNASa0uSVaqf38SNk8UkJ-XP3b5q4"
 const youTubeURL = 'https://www.googleapis.com/youtube/v3/search';
 
-
+let emptyResults = false
 
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
@@ -45,6 +45,9 @@ function filterByLength(responseJson, minutes){
         x++;
       }
   }
+  if (desiredResults.length === 0){
+    emptyResults = true
+  }
   displayResults(desiredResults); 
 }
 
@@ -70,16 +73,21 @@ function getTEDTalks(searchTerm, minutes){
 } 
 
 function displayResults(desiredResults) {
-  for (let i = 0; i < desiredResults.length; i++){
-    $('#results-list').append(
-      `<li>
-        <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}</a></h3>
-      
-        <div class = iframe-container>
-          <iframe src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-      </li>`
-    );
+  if(emptyResults === false){
+    for (let i = 0; i < desiredResults.length; i++){
+      $('#results-list').append(
+        `<li>
+          <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}</a></h3>
+        
+          <div class = iframe-container>
+            <iframe src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </li>`
+      );
+    }
+  } else{
+    $('#results-list').empty();
+    $('#results-list').replaceWith(`<ul id='results-list'><br><li>There were no results found. Please modify your search.</li></ul>`)
   }
   $('#results').removeClass('hidden');
 };
@@ -128,7 +136,7 @@ function displayResultsTitle(searchTerm){
     $('#js-form').removeClass('hidden');
     $('.reset').toggleClass('hidden');
     $('#results-list').empty();
-    $('#title').replaceWith(`<h1 id ='title'>Try Something Else:</h1>`);
+    $('#title').replaceWith(`<h2 id ='title'>Try something else</h2>`);
   });
 }
 
