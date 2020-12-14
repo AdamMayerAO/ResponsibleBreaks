@@ -15,12 +15,12 @@
         <h4 id = 'subtitle'>Everyone needs breaks, so give yourself a healthy time limit and enjoy!</h4>
       </header>
         <form id="js-form">
-            <label for="time"> I have </label>
-            <input type='number' id="minutes" name="time" value="10"> minutes<br>
+            <label for="time"> Time limit (minutes): </label><br>
+            <input type='number' id="minutes" name="time" value="10"><br><br>
             
-            <label for="js-search-term">I am interested in:</label>
+            <label for="js-search-term">I am interested in:</label><br>
             <input type="text" name="search-term" id="js-search-term" required>
-            <input type="submit" value="Go!">
+            <input class = 'go' type="submit" value="Go!">
         </form>
 
         <p id="js-error-message" class="error-message"></p>

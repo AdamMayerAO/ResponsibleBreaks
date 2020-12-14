@@ -7,15 +7,24 @@
   border-style: double inset;
   border-color: rgb(190, 109, 228); 
   margin: 0%;
+  font-family: Georgia, 'Times New Roman', Times, serif
 }
 .header{
   text-align: center;
   background-color: lightseagreen;
   margin: 4%;
-
 }
 .header:hover{
   background-color: rgb(61, 189, 157);
+}
+#minutes{
+  border-style:solid;
+  border-color: rgb(190, 109, 228); 
+}
+
+#js-search-term{
+  border-style:solid;
+  border-color: rgb(190, 109, 228); 
 }
 .iframe-container{
   position: relative;
@@ -37,16 +46,26 @@
 
 }
 #js-form{
+  margin: auto;
+  width: 70%;
+
   border-style: outset;
   border-width: 1px;
   border-color: lightseagreen;
-  margin: 1%;
 
 }
 .reset{
   position: absolute;
   right: 7%;
   border-style: ridge;
+}
+.go{
+  float: right;
+  background-color: rgb(138, 207, 204);
+  width: 17%;
+}
+.go:hover{
+  background-color: rgb(61, 189, 157);
 }
 .reset:hover{
   border-color: lightseagreen;
