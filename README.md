@@ -1,7 +1,7 @@
 “Come Waste Your Time With Me”
 
 Summary:
-https://docs.google.com/document/d/1bwFcTueWh9zEkChtoOM3FeFg-1CtXOGb6B89OZi3bhg/edit# 
+To see the README.md with images: https://docs.google.com/document/d/1bwFcTueWh9zEkChtoOM3FeFg-1CtXOGb6B89OZi3bhg/edit# 
 
 Everyone takes breaks, but sometimes our breaks can spiral into wasted time, down the never-ending rabbit hole of YouTube.
 This app is designed to allow a user to set the amount of time she wants to ‘waste’, to facilitate taking healthy length breaks.  The user is prompted to input time in minutes and a search term.

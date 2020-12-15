@@ -4,7 +4,7 @@ const apiKey =
 "AIzaSyAxmelNASa0uSVaqf38SNk8UkJ-XP3b5q4"
 const youTubeURL = 'https://www.googleapis.com/youtube/v3/search';
 
-let emptyResults = false
+let emptyResults = 0 //error message counter
 
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
@@ -13,6 +13,7 @@ function formatQueryParams(params) {
 }
 //with the YouTube ids we can get the length of each video
 function getVideoLength(ids, minutes){
+    ids = ids.filter(id=>id.length>0)
     const url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids}&key=${apiKey}`
     fetch(url)
     .then(response => {
@@ -26,14 +27,14 @@ function getVideoLength(ids, minutes){
         console.error(err)
         });
 }
+
 function filterByLength(responseJson, minutes){
 
   minutes=parseInt(minutes);
   let desiredResults = []
-  let time = ""
   let x = 0
-  
-    for (let i = 0; i<responseJson.items.length; i++){   
+  let time = ''
+  for (let i = 0; i<responseJson.items.length; i++){  
       let duration =  responseJson.items[i].contentDetails.duration
       if(duration.includes("H")) continue; //don't add videos over 1 hour
       if(duration.includes("P0D")) continue; //don't add live streams
@@ -42,13 +43,47 @@ function filterByLength(responseJson, minutes){
       time = parseInt(time);
       if (time <= minutes && x<3){
         desiredResults.push(responseJson.items[i]);
-        x++;
+        x++; //limit desiredResults to 3 of each
       }
   }
+  
   if (desiredResults.length === 0){
-    emptyResults = true
+    emptyResults++
   }
   displayResults(desiredResults); 
+}
+
+function displayResults(desiredResults) {
+  if(emptyResults != 2){
+    for (let i = 0; i < desiredResults.length; i++){
+      $('#results-list').append(
+        `<li>
+          <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}  </a><br>Time: ${desiredResults[i].contentDetails.duration.slice(2)} </h3>
+        
+          <div class = iframe-container>
+            <iframe src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </li>`
+      );
+    }
+  } else{
+    $('#results-list').replaceWith(`<ul id='results-list'><br><li>There were no results found. Please modify your search.</li></ul>`)
+  }
+  $('#results').removeClass('hidden');
+};
+
+//Format the display results
+function displayResultsTitle(searchTerm){
+  const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
+  $('#title').replaceWith(`<h1 id ='title'>"${results}" Results:</h1>`);
+  $('#js-form').addClass('hidden');
+  $('.reset').removeClass('hidden');
+  $('.reset').click(function(event){
+    $('#js-form').removeClass('hidden');
+    $('.reset').toggleClass('hidden');
+    $('#results-list').empty();
+    $('#title').replaceWith(`<h2 id ='title'>Try something else</h2>`);
+  });
 }
 
 function getTEDTalks(searchTerm, minutes){
@@ -71,26 +106,6 @@ function getTEDTalks(searchTerm, minutes){
         console.error(err);
         });
 } 
-
-function displayResults(desiredResults) {
-  if(emptyResults === false){
-    for (let i = 0; i < desiredResults.length; i++){
-      $('#results-list').append(
-        `<li>
-          <h3><a href="https://www.youtube.com/watch?v=${desiredResults[i].id} target="_blank">${desiredResults[i].snippet.title}  </a><br>Time: ${desiredResults[i].contentDetails.duration.slice(2)} </h3>
-        
-          <div class = iframe-container>
-            <iframe src="https://www.youtube.com/embed/${desiredResults[i].id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-        </li>`
-      );
-    }
-  } else{
-    $('#results-list').replaceWith(`<ul id='results-list'><br><li>There were no results found. Please modify your search.</li></ul>`)
-  }
-  $('#results').removeClass('hidden');
-};
-
 
 function getYouTubeVideos(query, minutes) {
   let time = ""
@@ -123,20 +138,6 @@ function getYouTubeVideos(query, minutes) {
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
-}
-
-//Format the display results
-function displayResultsTitle(searchTerm){
-  const results = searchTerm[0].toUpperCase() + searchTerm.substring(1)
-  $('#title').replaceWith(`<h1 id ='title'>"${results}" Results:</h1>`);
-  $('#js-form').addClass('hidden');
-  $('.reset').removeClass('hidden');
-  $('.reset').click(function(event){
-    $('#js-form').removeClass('hidden');
-    $('.reset').toggleClass('hidden');
-    $('#results-list').empty();
-    $('#title').replaceWith(`<h2 id ='title'>Try something else</h2>`);
-  });
 }
 
 function watchForm() {
